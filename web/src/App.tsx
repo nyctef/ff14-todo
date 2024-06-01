@@ -8,6 +8,7 @@ import {
 import { createStore, reconcile } from "solid-js/store";
 import { Todo, TodoCreateRequest } from "../../share/types";
 import { resets } from "../../share/resets";
+import { apiClient } from "./apiClient";
 
 const TodoCheckbox: Component<{
   todo: Todo;
@@ -67,37 +68,20 @@ const App: Component = () => {
   const [loading, setLoading] = createSignal(false);
 
   onMount(async () => {
-    const response = (await (await fetch("/api/todos")).json()) as Todo[];
-    const todos = response.map((todo) => ({
-      ...todo,
-      // dates will be serialized in json as strings,
-      // so we need to convert them back
-      lastDone: todo.lastDone ? new Date(todo.lastDone) : null,
-    }));
-    console.log({ todos });
+    const todos = await apiClient.getTodos();
     setTodos(reconcile(todos));
   });
 
   async function createTodo(text: string, resetName: string) {
     setLoading(true);
-    const body: TodoCreateRequest = { text, resetName };
-    const response = await fetch("/api/todos", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
-    // TODO: validate response shape using io-ts or similar
-    setTodos(todos.length, response);
+    const newTodo = await apiClient.createTodo(text, resetName);
+    setTodos(todos.length, newTodo);
     setLoading(false);
   }
 
   async function setTodoCompleted(id: number, value: Date | null) {
     setLoading(true);
-    await fetch(`/api/todos/${id}/completed`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ completed: value }),
-    });
+    await apiClient.setTodoCompleted(id, value);
     setTodos((t) => t.id === id, { lastDone: value });
     setLoading(false);
   }
