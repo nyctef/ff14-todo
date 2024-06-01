@@ -5,8 +5,8 @@ import {
   onMount,
   type Component,
 } from "solid-js";
-import { createStore } from "solid-js/store";
-import { Todo } from "../../share/types";
+import { createStore, reconcile } from "solid-js/store";
+import { Todo, TodoCreateRequest } from "../../share/types";
 import { resets } from "../../share/resets";
 
 const TodoCheckbox: Component<{
@@ -36,9 +36,21 @@ const TodoCheckbox: Component<{
   );
 };
 
-const NewTodoForm: Component = () => {
+const NewTodoForm: Component<{
+  createTodo: (text: string, resetName: string) => void;
+}> = (props) => {
   return (
-    <form method="post">
+    <form
+      method="post"
+      onSubmit={(e) => {
+        e.preventDefault();
+        const data = new FormData(e.currentTarget);
+        props.createTodo(
+          data.get("new_name") as string,
+          data.get("reset") as string
+        );
+      }}
+    >
       <input name="new_name" type="text" placeholder="add new todo" />
       <select name="reset">
         <For each={resets}>
@@ -63,8 +75,21 @@ const App: Component = () => {
       lastDone: todo.lastDone ? new Date(todo.lastDone) : null,
     }));
     console.log({ todos });
-    setTodos(todos);
+    setTodos(reconcile(todos));
   });
+
+  async function createTodo(text: string, resetName: string) {
+    setLoading(true);
+    const body: TodoCreateRequest = { text, resetName };
+    const response = await fetch("/api/todos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+    // TODO: validate response shape using io-ts or similar
+    setTodos(todos.length, response);
+    setLoading(false);
+  }
 
   async function setTodoCompleted(id: number, value: Date | null) {
     setLoading(true);
@@ -93,7 +118,7 @@ const App: Component = () => {
           )}
         </For>
       </ul>
-      <NewTodoForm />
+      <NewTodoForm createTodo={createTodo} />
     </>
   );
 };

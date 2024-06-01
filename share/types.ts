@@ -10,3 +10,8 @@ export type Todo = {
   lastDone: Date | null;
   reset: Reset;
 };
+
+export type TodoCreateRequest = {
+  text: string;
+  resetName: string;
+};
