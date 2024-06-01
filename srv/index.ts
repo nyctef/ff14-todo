@@ -10,8 +10,10 @@ app.get("/api/todos", (req: Request, res: Response) => {
   res.json(todos);
 });
 
-app.post("/api/todos/:id/completed", (req: Request, res: Response) => {
+app.post("/api/todos/:id/completed", async (req: Request, res: Response) => {
   console.log("POST /api/todos/:id/completed");
+  // TODO: remove debug delay
+  await new Promise((resolve) => setTimeout(resolve, 200));
   const id = parseInt(req.params.id, 10);
   const completed = req.body.completed;
 
