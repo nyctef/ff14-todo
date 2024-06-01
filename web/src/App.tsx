@@ -76,6 +76,8 @@ const App: Component = () => {
     setLoading(true);
     const newTodo = await apiClient.createTodo(text, resetName);
     setTodos(todos.length, newTodo);
+
+    // TODO: try/finally here + error handling
     setLoading(false);
   }
 
