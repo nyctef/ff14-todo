@@ -3,10 +3,8 @@
   "version": "0.0.0",
   "description": "",
   "scripts": {
-    "start": "vite",
-    "dev": "vite",
-    "build": "vite build",
-    "serve": "vite preview"
+    "start": "vite build --watch",
+    "build": "vite build"
   },
   "license": "MIT",
   "devDependencies": {
