@@ -7,6 +7,7 @@ import {
 } from "solid-js";
 import { createStore } from "solid-js/store";
 import { Todo } from "../../share/types";
+import { resets } from "../../share/resets";
 
 const TodoCheckbox: Component<{
   todo: Todo;
@@ -35,6 +36,20 @@ const TodoCheckbox: Component<{
   );
 };
 
+const NewTodoForm: Component = () => {
+  return (
+    <form method="post">
+      <input name="new_name" type="text" placeholder="add new todo" />
+      <select name="reset">
+        <For each={resets}>
+          {(reset) => <option value={reset.name}>{reset.name}</option>}
+        </For>
+      </select>
+      <button type="submit">add</button>
+    </form>
+  );
+};
+
 const App: Component = () => {
   const [todos, setTodos] = createStore<Todo[]>([]);
   const [loading, setLoading] = createSignal(false);
@@ -52,7 +67,6 @@ const App: Component = () => {
   });
 
   async function setTodoCompleted(id: number, value: Date | null) {
-    console.log(`TODO: set ${id} ${value}`);
     setLoading(true);
     await fetch(`/api/todos/${id}/completed`, {
       method: "POST",
@@ -79,6 +93,7 @@ const App: Component = () => {
           )}
         </For>
       </ul>
+      <NewTodoForm />
     </>
   );
 };
