@@ -8,6 +8,7 @@ import { NewTodoForm } from "./NewTodoForm";
 const App: Component = () => {
   const [todos, setTodos] = createStore<Todo[]>([]);
   const [loading, setLoading] = createSignal(false);
+  const [error, setError] = createSignal<string | null>(null);
 
   onMount(async () => {
     const todos = await apiClient.getTodos();
@@ -22,7 +23,7 @@ const App: Component = () => {
         setLoading(true);
         return await fn(...input);
       } catch (e) {
-        console.error(e);
+        setError(e.message);
       } finally {
         setLoading(false);
       }
@@ -67,7 +68,8 @@ const App: Component = () => {
           )}
         </For>
       </ul>
-      <NewTodoForm createTodo={createTodo} />
+      <NewTodoForm createTodo={handleErrors(createTodo)} />
+      {error() && <p style="color: red">{error()}</p>}
     </>
   );
 };

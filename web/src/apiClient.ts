@@ -23,6 +23,7 @@ export const apiClient = {
       },
       body: JSON.stringify(body),
     });
+    // TODO: extend this .ok() check to other api calls
     if (!response.ok) {
       throw new Error(`Failed to create todo: ${await response.text()}`);
     }
