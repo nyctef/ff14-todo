@@ -1,5 +1,5 @@
 import express, { Express, NextFunction, Request, Response } from "express";
-import { api } from "./api";
+import { api } from "./inMemoryApi";
 import { asyncHandler } from "./util";
 import { HttpError } from "./error";
 
