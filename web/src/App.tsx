@@ -40,6 +40,8 @@ const App: Component = () => {
               <TodoCheckbox
                 todo={todo}
                 setCompleted={setTodoCompleted}
+                rename={() => {}}
+                remove={() => {}}
                 loading={loading()}
               />
             </li>
