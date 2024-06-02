@@ -14,34 +14,39 @@ const App: Component = () => {
     setTodos(reconcile(todos));
   });
 
+  function handleErrors<TIn extends any[], TOut>(
+    fn: (...input: TIn) => Promise<TOut>
+  ) {
+    return async (...input: TIn) => {
+      try {
+        setLoading(true);
+        return await fn(...input);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+  }
+
   async function createTodo(text: string, resetName: string) {
-    setLoading(true);
     const newTodo = await apiClient.createTodo(text, resetName);
     setTodos(todos.length, newTodo);
-
-    // TODO: try/finally here + error handling
-    setLoading(false);
   }
 
   async function setTodoCompleted(id: number, value: Date | null) {
-    setLoading(true);
     await apiClient.setTodoCompleted(id, value);
     setTodos((t) => t.id === id, { lastDone: value });
-    setLoading(false);
   }
 
   async function renameTodo(id: number, text: string) {
-    setLoading(true);
     await apiClient.renameTodo(id, text);
     setTodos((t) => t.id === id, { text });
-    setLoading(false);
   }
 
   async function removeTodo(id: number) {
-    setLoading(true);
     await apiClient.removeTodo(id);
     setTodos(todos.filter((t) => t.id !== id));
-    setLoading(false);
   }
 
   return (
@@ -53,9 +58,9 @@ const App: Component = () => {
             <li>
               <TodoCheckbox
                 todo={todo}
-                setCompleted={setTodoCompleted}
-                rename={renameTodo}
-                remove={removeTodo}
+                setCompleted={handleErrors(setTodoCompleted)}
+                rename={handleErrors(renameTodo)}
+                remove={handleErrors(removeTodo)}
                 loading={loading()}
               />
             </li>
