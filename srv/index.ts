@@ -40,6 +40,31 @@ app.post(
   })
 );
 
+app.post(
+  "/api/todos/:id/name",
+  asyncHandler(async (req, res) => {
+    console.log("POST /api/todos/:id/name");
+    const id = parseInt(req.params.id, 10);
+    const text = req.body.text;
+
+    await api.renameTodo(id, text);
+
+    res.sendStatus(204);
+  })
+);
+
+app.delete(
+  "/api/todos/:id",
+  asyncHandler(async (req, res) => {
+    console.log("DELETE /api/todos/:id");
+    const id = parseInt(req.params.id, 10);
+
+    await api.removeTodo(id);
+
+    res.sendStatus(204);
+  })
+);
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);

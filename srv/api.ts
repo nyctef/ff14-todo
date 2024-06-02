@@ -41,4 +41,22 @@ export const api = {
     }
     todo.lastDone = completed ? new Date() : null;
   },
+  renameTodo: async (id: number, text: string) => {
+    // TODO: remove debug delay
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    const todo = todos.find((todo) => todo.id === id);
+    if (!todo) {
+      throw new HttpError(`Todo with id ${id} not found`, 404);
+    }
+    todo.text = text;
+  },
+  removeTodo: async (id: number) => {
+    // TODO: remove debug delay
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    const index = todos.findIndex((todo) => todo.id === id);
+    if (index === -1) {
+      throw new HttpError(`Todo with id ${id} not found`, 404);
+    }
+    todos.splice(index, 1);
+  },
 };

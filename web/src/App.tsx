@@ -30,6 +30,20 @@ const App: Component = () => {
     setLoading(false);
   }
 
+  async function renameTodo(id: number, text: string) {
+    setLoading(true);
+    await apiClient.renameTodo(id, text);
+    setTodos((t) => t.id === id, { text });
+    setLoading(false);
+  }
+
+  async function removeTodo(id: number) {
+    setLoading(true);
+    await apiClient.removeTodo(id);
+    setTodos(todos.filter((t) => t.id !== id));
+    setLoading(false);
+  }
+
   return (
     <>
       <h1>FF14 TODOs</h1>
@@ -40,8 +54,8 @@ const App: Component = () => {
               <TodoCheckbox
                 todo={todo}
                 setCompleted={setTodoCompleted}
-                rename={() => {}}
-                remove={() => {}}
+                rename={renameTodo}
+                remove={removeTodo}
                 loading={loading()}
               />
             </li>

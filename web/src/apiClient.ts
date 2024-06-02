@@ -31,4 +31,18 @@ export const apiClient = {
       body: JSON.stringify({ completed: value }),
     });
   },
+
+  async renameTodo(id: number, text: string) {
+    await fetch(`/api/todos/${id}/name`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+  },
+
+  async removeTodo(id: number) {
+    await fetch(`/api/todos/${id}`, {
+      method: "DELETE",
+    });
+  },
 };
