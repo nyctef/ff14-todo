@@ -17,11 +17,17 @@ export const apiClient = {
     const body: TodoCreateRequest = { text, resetName };
     const response = await fetch("/api/todos", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
       body: JSON.stringify(body),
-    }).then((res) => res.json());
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to create todo: ${await response.text()}`);
+    }
     // TODO: validate response shape using io-ts or similar
-    return response;
+    return await response.json();
   },
 
   async setTodoCompleted(id: number, value: Date | null) {
