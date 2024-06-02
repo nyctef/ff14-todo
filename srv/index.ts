@@ -1,6 +1,7 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express, NextFunction, Request, Response } from "express";
 import { api } from "./api";
 import { asyncHandler } from "./util";
+import { HttpError } from "./error";
 
 const app = express();
 app.use(express.static("../web/dist"));
@@ -64,6 +65,19 @@ app.delete(
     res.sendStatus(204);
   })
 );
+
+app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
+  // https://expressjs.com/en/guide/error-handling.html
+  if (res.headersSent) {
+    return next(err);
+  }
+  if (req.path.startsWith("/api") && err instanceof HttpError) {
+    console.error(err);
+    return res.status(err.statusCode).json({ error: err.message });
+  }
+
+  return next(err);
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
