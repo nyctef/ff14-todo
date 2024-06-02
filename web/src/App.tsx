@@ -1,14 +1,23 @@
-import { For, createSignal, onMount, type Component } from "solid-js";
-import { createStore, reconcile } from "solid-js/store";
+import {
+  For,
+  createEffect,
+  createSignal,
+  onMount,
+  type Component,
+} from "solid-js";
+import { createStore, reconcile, unwrap } from "solid-js/store";
 import { Todo } from "../../share/types";
 import { apiClient } from "./apiClient";
 import { TodoCheckbox } from "./TodoCheckbox";
 import { NewTodoForm } from "./NewTodoForm";
+import { is_done, millis_remaining } from "./reset_utils";
+import { useNow } from "./useNow";
 
 const App: Component = () => {
   const [todos, setTodos] = createStore<Todo[]>([]);
   const [loading, setLoading] = createSignal(false);
   const [error, setError] = createSignal<string | null>(null);
+  const now = useNow();
 
   onMount(async () => {
     const todos = await apiClient.getTodos();
@@ -50,11 +59,27 @@ const App: Component = () => {
     setTodos(todos.filter((t) => t.id !== id));
   }
 
+  function sort_is_done(a: boolean, b: boolean) {
+    // return 1 if `a` is done ("greater" than b so should be sorted later)
+    return a === b ? 0 : a ? 1 : -1;
+  }
+
+  // TODO: sorting should probably have some unit tests - definitely
+  // got this wrong the last time
+  const sortedTodos = () =>
+    todos.slice().sort(
+      (a, b) =>
+        // `||` here will return the first non-zero comparison result
+        sort_is_done(is_done(a, now()), is_done(b, now())) ||
+        millis_remaining(a, now()) - millis_remaining(b, now()) ||
+        a.text.localeCompare(b.text)
+    );
+
   return (
     <>
       <h1>FF14 TODOs</h1>
       <ul>
-        <For each={todos} fallback={<li>Loading...</li>}>
+        <For each={sortedTodos()} fallback={<li>Loading...</li>}>
           {(todo) => (
             <li>
               <TodoCheckbox

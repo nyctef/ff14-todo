@@ -1,13 +1,7 @@
-import { Component, createSignal, on, onCleanup } from "solid-js";
+import { Component } from "solid-js";
 import { Todo } from "../../share/types";
 import { dateDiff, nextReset } from "./reset_utils";
-
-const useNow = () => {
-  const [now, setNow] = createSignal(new Date());
-  const timer = setInterval(() => setNow(new Date()), 1000);
-  onCleanup(() => clearInterval(timer));
-  return now;
-};
+import { useNow } from "./useNow";
 
 export const TodoCheckbox: Component<{
   todo: Todo;
