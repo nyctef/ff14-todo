@@ -14,7 +14,6 @@ export const NewTodoForm: Component<{
           data.get("new_name") as string,
           data.get("reset_") as string
         );
-        console.log({ e });
         e.currentTarget.reset();
       }}
     >
