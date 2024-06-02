@@ -1,6 +1,6 @@
 import { Component } from "solid-js";
 import { Todo } from "../../share/types";
-import { dateDiff, nextReset } from "./reset_utils";
+import { dateDiff, is_done, nextReset } from "./reset_utils";
 import { useNow } from "./useNow";
 
 export const TodoCheckbox: Component<{
@@ -12,7 +12,7 @@ export const TodoCheckbox: Component<{
 }> = (props) => {
   const now = useNow();
 
-  const completed = () => props.todo.lastDone && props.todo.lastDone <= now();
+  const completed = () => is_done(props.todo, now());
 
   function doRename() {
     const oldText = props.todo.text;
