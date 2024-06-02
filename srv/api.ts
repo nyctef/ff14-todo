@@ -23,6 +23,10 @@ export const api = {
     if (!reset) {
       throw new HttpError(`Reset with name ${req.resetName} not found`, 400);
     }
+    const existing = todos.find((todo) => todo.text === req.text);
+    if (existing) {
+      throw new HttpError(`Todo with text ${req.text} already exists`, 409);
+    }
     const todo: Todo = {
       id: nextId++,
       text: req.text,
