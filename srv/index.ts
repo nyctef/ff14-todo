@@ -22,6 +22,10 @@ app.get(
     // in the outer scope, but attempting that produces a whole
     // can of worms with js module systems and changing stuff
     // to allow top-level awaits.
+    //
+    // maybe push this into a middleware that can use a pg
+    // connection pool to have per-request connections so that
+    // the connection breaking can get auto-fixed?
     res.json(await (await api).getTodos().catch(next));
   })
 );
