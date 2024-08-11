@@ -2,12 +2,36 @@ import express, { Express, NextFunction, Request, Response } from "express";
 import { asyncHandler } from "./util";
 import { HttpError } from "./error";
 import { EventSourcedApi, PostgresEventStorage } from "./postgresEventStoreApi";
+import { setupAuth } from "./auth";
+import cookieParser from "cookie-parser";
 
 const api = PostgresEventStorage.create_from_env().then((s) =>
   EventSourcedApi.create(s)
 );
 
+let workosEnvVars = {
+  clientId: process.env.WORKOS_CLIENT_ID,
+  apiKey: process.env.WORKOS_API_KEY,
+  cookiePassword: process.env.WORKOS_COOKIE_PASSWORD,
+};
+
+// console.log({ workosEnvVars });
+
 const app = express();
+app.use(cookieParser());
+
+if (
+  workosEnvVars.apiKey &&
+  workosEnvVars.clientId &&
+  workosEnvVars.cookiePassword
+) {
+  setupAuth(app, {
+    apiKey: workosEnvVars.apiKey,
+    clientId: workosEnvVars.clientId,
+    cookiePassword: workosEnvVars.cookiePassword,
+  });
+}
+
 app.use(express.static("../web/dist"));
 app.use(express.json());
 
