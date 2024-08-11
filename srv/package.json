@@ -2,9 +2,9 @@
   "name": "srv",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "nodemon index.ts",
+    "start": "nodemon --exec node -r ts-node/register --env-file=.env .index.ts",
     "build": "tsc"
   },
   "keywords": [],
