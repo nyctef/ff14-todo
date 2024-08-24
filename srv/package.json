@@ -5,7 +5,10 @@
   "main": "index.ts",
   "scripts": {
     "start": "nodemon --exec node -r ts-node/register --env-file=.env .index.ts",
-    "build": "tsc"
+    "prebuild": "rm -rf dist",
+    "build": "tsc",
+    "postbuild": "cp package.json pnpm-lock.yaml dist && cd dist && npx pnpm install --prod --frozen-lockfile"
+
   },
   "keywords": [],
   "author": "",
