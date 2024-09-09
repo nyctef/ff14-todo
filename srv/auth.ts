@@ -84,6 +84,8 @@ export function setupAuth(app: Express, config: WorkOSConfig) {
   });
 
   app.get("/auth/login", (req, res) => {
+    // TODO: force https here if in production env
+    // TODO: use debug package to clean up auth logging in this file
     const redirectUri = `${req.protocol}://${req.get("host")}/auth/callback`;
     console.log("login", { redirectUri });
     const authorizationUrl = workos.userManagement.getAuthorizationUrl({
