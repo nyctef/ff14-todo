@@ -6,9 +6,7 @@
   "scripts": {
     "start": "nodemon --exec node -r ts-node/register --env-file=.env index.ts",
     "prebuild": "rm -rf dist",
-    "build": "tsc",
-    "postbuild": "cp package.json pnpm-lock.yaml dist && cd dist && npx pnpm install --prod --frozen-lockfile"
-
+    "build": "webpack --mode production"
   },
   "keywords": [],
   "author": "",
@@ -25,7 +23,10 @@
     "@types/node": "^20.13.0",
     "@types/pg": "^8.11.6",
     "nodemon": "^3.1.2",
+    "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "webpack": "^5.94.0",
+    "webpack-cli": "^5.1.4"
   }
 }

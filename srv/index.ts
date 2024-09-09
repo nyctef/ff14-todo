@@ -32,7 +32,8 @@ if (
   });
 }
 
-app.use(express.static("../web/dist"));
+const staticDir = app.get("env") !== "development" ? "./web" : "../web/dist";
+app.use(express.static(staticDir));
 app.use(express.json());
 
 app.get(
