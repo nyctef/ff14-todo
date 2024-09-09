@@ -63,7 +63,7 @@ export function setupAuth(app: Express, config: WorkOSConfig) {
         });
 
       if (!refreshResponse.authenticated) {
-        return res.redirect("/login");
+        return res.redirect("/auth/login");
       }
 
       // Update the cookie
@@ -79,7 +79,7 @@ export function setupAuth(app: Express, config: WorkOSConfig) {
       // Failed to refresh access token, redirect user to login page
       // after deleting the cookie
       res.clearCookie("wos-session");
-      return res.redirect("/login");
+      return res.redirect("/auth/login");
     }
   });
 
