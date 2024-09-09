@@ -84,12 +84,14 @@ export function setupAuth(app: Express, config: WorkOSConfig) {
   });
 
   app.get("/auth/login", (req, res) => {
+    const redirectUri = `${req.protocol}://${req.get("host")}/auth/callback`;
+    console.log("login", { redirectUri });
     const authorizationUrl = workos.userManagement.getAuthorizationUrl({
       // Specify that we'd like AuthKit to handle the authentication flow
       provider: "authkit",
 
       // The callback endpoint that WorkOS will redirect to after a user authenticates
-      redirectUri: `${req.protocol}://${req.get("host")}/auth/callback`,
+      redirectUri,
       clientId: workos.clientId!,
     });
 
