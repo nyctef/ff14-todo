@@ -119,7 +119,8 @@ app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
   return next(err);
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
+const port = parseInt(process.env.PORT || '3000', 10);
+const host = process.env.HOST || '127.0.0.1';
+app.listen(port, host, () => {
+  console.log(`Server listening at http://${host}:${port}`);
 });
