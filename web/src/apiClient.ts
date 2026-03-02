@@ -1,8 +1,11 @@
 import { Todo, TodoCreateRequest } from "../../share/types";
 
+// set via vite build
+const apiBase = `${import.meta.env.BASE_URL}api`;
+
 export const apiClient = {
   async getTodos() {
-    const response = (await (await fetch("/api/todos")).json()) as Todo[];
+    const response = (await (await fetch(`${apiBase}/todos`)).json()) as Todo[];
     const todos = response.map((todo) => ({
       ...todo,
       // dates will be serialized in json as strings,
@@ -15,7 +18,7 @@ export const apiClient = {
 
   async createTodo(text: string, resetName: string): Promise<Todo> {
     const body: TodoCreateRequest = { text, resetName };
-    const response = await fetch("/api/todos", {
+    const response = await fetch(`${apibase}/todos`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -32,7 +35,7 @@ export const apiClient = {
   },
 
   async setTodoCompleted(id: number, value: Date | null) {
-    await fetch(`/api/todos/${id}/completed`, {
+    await fetch(`${apiBase}/todos/${id}/completed`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ completed: value }),
@@ -40,7 +43,7 @@ export const apiClient = {
   },
 
   async renameTodo(id: number, text: string) {
-    await fetch(`/api/todos/${id}/name`, {
+    await fetch(`${apiBase}/todos/${id}/name`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text }),
@@ -48,7 +51,7 @@ export const apiClient = {
   },
 
   async removeTodo(id: number) {
-    await fetch(`/api/todos/${id}`, {
+    await fetch(`${apiBase}/todos/${id}`, {
       method: "DELETE",
     });
   },
