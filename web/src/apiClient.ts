@@ -18,7 +18,7 @@ export const apiClient = {
 
   async createTodo(text: string, resetName: string): Promise<Todo> {
     const body: TodoCreateRequest = { text, resetName };
-    const response = await fetch(`${apibase}/todos`, {
+    const response = await fetch(`${apiBase}/todos`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
