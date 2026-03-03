@@ -44,7 +44,7 @@ type TodoEvent =
     };
 
 export class PostgresEventStorage implements EventStorage {
-  constructor(private client: pg.Client) {}
+  constructor(private pool: pg.Pool) {}
 
   static async create_from_env(): Promise<PostgresEventStorage> {
     const connectionString = process.env.FF14_TODO_PG_CONNECTION_STRING;
@@ -52,17 +52,16 @@ export class PostgresEventStorage implements EventStorage {
       throw new Error("FF14_TODO_PG_CONNECTION_STRING not set");
     }
 
-    const client = new pg.Client(connectionString);
-    await client.connect();
+    const pool = new pg.Pool({ connectionString });
 
-    return new PostgresEventStorage(client);
+    return new PostgresEventStorage(pool);
   }
 
   async store_event(event: TodoEvent): Promise<void> {
-    await this.client.query("INSERT INTO events (data) VALUES ($1)", [event]);
+    await this.pool.query("INSERT INTO events (data) VALUES ($1)", [event]);
   }
   async get_events(): Promise<TodoEvent[]> {
-    const result = await this.client.query("SELECT data FROM events");
+    const result = await this.pool.query("SELECT data FROM events");
     return result.rows.map((row) => row.data);
   }
 }
